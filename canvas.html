@@ -1,0 +1,105 @@
+﻿<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>Edge detection demo</title>
+  <script>
+   var image = new Image();
+   function init() {
+     demo();
+   }
+   function demo() {
+   	 var x = 100;
+   	 var i = 10;
+     var canvas = document.getElementsByTagName('canvas')[0];
+     var ct = canvas.getContext('2d');
+     var p = Math.PI;
+     ct.strokeStyle="black";
+    
+    ct.beginPath();
+    ct.arc(500,300,150,p/2,p+p/2,false);
+    
+    ct.quadraticCurveTo(400, 210, 500, 300); 
+    ct.quadraticCurveTo(600, 390, 500, 450);
+    ct.closePath();
+    ct.stroke();
+    ct.fill();
+    
+    ct.beginPath();
+    ct.arc(500,300,150,p/2,p+p/2,true); 
+    ct.stroke();
+    
+    ct.lineWidth=1;
+    ct.fillStyle="black"; 
+      
+    ct.beginPath();
+    ct.arc(520,210,10,0,Math.PI*2,true);
+    ct.fill();
+    
+    ct.fillStyle="white"; 
+    ct.beginPath();
+    ct.arc(480,390,10,0,Math.PI*2,true); 
+    ct.fill();
+  
+    drawLine(ct);  
+    
+   
+   }
+   
+   function drawLine(ctx){
+    ctx.lineWidth = 6;
+    ctx.font = "60pt Calibri";
+    var guas = [[4,'震'],[5,'离'],[6,'兑'],[7,'乾'],[3,'巽'],[2,'坎'],[1,'艮'],[0,'坤']];
+    ctx.translate(500,300);
+    var j = 1,gs=8;
+	  for(var i=0;i<j*gs;i++){
+	  
+	   ctx.rotate(Math.PI*2/(gs*j));
+	   ctx.beginPath();
+	   ctx.strokeText(guas[i][1],j*(-32),300);
+	   draw.drawGua(ctx,[guas[i][0],j*(-32),200]);
+	 }
+   }
+   var draw = (function(){
+   	var drawYang= function(ctx,x,y){
+   		ctx.lineWidth = 6;
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x+80, y);
+			ctx.stroke();
+   	};
+   	var drawYin= function(ctx,x,y){
+   		ctx.lineWidth = 6;
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x+35, y);
+			ctx.moveTo(x+45, y);
+			ctx.lineTo(x+80, y);
+			ctx.stroke();
+   	};
+   	var drawGua = function(ctx,gua){
+   		 
+   		    ga = gua[0].toString(2);
+   		    if(ga.length ==2) ga="0"+ga;
+   		    if(ga.length ==1) ga="00"+ga;
+   		    for(var j=0;j< 3;j++){
+   		       
+   		    	 if(ga[j] == '1')
+   		    	  this.drawYang(ctx,gua[1],j*10+gua[2]);
+   		    	 else
+   		    	 	this.drawYin(ctx,gua[1],j*10+gua[2]);
+   		    
+   		  }
+   	};
+    
+   	 return {
+   	 drawGua:drawGua,
+     drawYang:drawYang,
+     drawYin:drawYin,
+  };
+  }());
+  </script>
+ </head>
+ <body onload="init()">
+  <canvas width=800 height=800></canvas>
+ </body>
+</html>
