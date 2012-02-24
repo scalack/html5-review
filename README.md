@@ -1,2 +1,3 @@
 ##This is a canvas exercise
-* 内容为太极图八卦图
+* canvas内容为太极图八卦图练习
+* FileAPI
