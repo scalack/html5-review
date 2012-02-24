@@ -1,4 +1,4 @@
-@inp = document.getElementById 'input'
+﻿@inp = document.getElementById 'input'
 box = document.getElementById 'thumb'
 @reader = new FileReader
 @handleFiles = ->
@@ -18,7 +18,7 @@ window.onload = ->
 	       afile = files[i] for i in [0...files.length]
 	       imageReader = new FileReader
 	       imageReader.readAsDataURL afile
-	       #�˴�doΪִ�бհ�
+	       #此处do为执行闭包
 	       imageReader.onload =  do (afile)->
 	          (e)->
 	             span = document.createElement 'span'
