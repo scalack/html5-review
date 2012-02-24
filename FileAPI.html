@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js"></script>
+		
+	<script type="text/coffeescript">
+	 @inp = document.getElementById 'input'
+	 @reader = new FileReader()
+	 @handleFiles = ->
+	 	  fileList = @files
+	 	  for i in [0...fileList.length]
+	 	     reader.readAsText fileList[i]
+	 	     #chrome has some wrong in the file api
+	 	     #reader.onload = (e)-> alert e.target.result
+	 	     
+	 	     reader.onload = (e)->
+	 	         alert reader.result
+	 window.onload = ->
+	      inp.addEventListener 'change',handleFiles,false
+	 	
+	 	
+	 	
+	</script>
+</head>
+<body>
+	<input type=file id='input'/>
+</body>
+
+</html>
