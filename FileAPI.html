@@ -3,10 +3,11 @@
 	<head>
 	<script src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js"></script>
 		
-	<script type="text/coffeescript">
-	 @inp = document.getElementById 'input'
-	 @reader = new FileReader()
-	 @handleFiles = ->
+<script type="text/coffeescript">
+@inp = document.getElementById 'input'
+box = document.getElementById 'thumb'
+@reader = new FileReader
+@handleFiles = ->
 	 	  fileList = @files
 	 	  for i in [0...fileList.length]
 	 	     reader.readAsText fileList[i]
@@ -17,13 +18,37 @@
 	 	         alert reader.result
 	 window.onload = ->
 	      inp.addEventListener 'change',handleFiles,false
-	 	
-	 	
-	 	
-	</script>
+	      
+@imageSel = (files)->	
+	       
+	       afile = files[i] for i in [0...files.length]
+	       imageReader = new FileReader
+	       imageReader.readAsDataURL afile
+	       #此处do为执行闭包
+	       imageReader.onload =  do (afile)->
+	          (e)->
+	             span = document.createElement 'span'
+	             span.innerHTML = ['<img class="images" src="', e.target.result,'" title="', afile.name, '"/>'].join ''
+	              
+	             document.getElementById('thumb').insertBefore span,null
+	       
+                    
+@dropIt = (e)->
+	     imageSel e.dataTransfer.files
+	     do e.stopPropagation
+	     do e.preventDefault
+</script>
 </head>
 <body>
+	<mark>文件上传</mark>
 	<input type=file id='input'/>
+	<p>
+	<table style="border:1px solid red;">
+	<td align="center" height=200 width=500  ondragenter="return false" ondragover="return false" ondrop="dropIt(event)">	
+	   <output id="thumb" >e</output>	
+  </td>	
+ </table>
+	</p>	
 </body>
 
 </html>
