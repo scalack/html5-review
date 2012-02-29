@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html> 
+<html>
+<head>
+<script  src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<meta  charset=utf-8/>
+<title>Test The  ajax</title>
+
+<style type="text/css">
+ 
+ </style>
+<body>
+
+<input type="radio" name="fruit" value = "Apple">苹果  [<font color=blue id="Apple"></font>]<br>
+<input type="radio" name="fruit" value = "Orange">桔子 [<font color=blue id="Orange"></font>]<br> 
+<input type="radio" name="fruit" value = "Mango">芒果  [<font color=blue id="Mango"></font>]<br> 
+
+<input type="button" value="提交" id="send" onclick="send();">
+
+
+</p>
+The total votes:
+<div id="ret">
+	
+</div>
+
+<script>
+ 
+ var socket = new io.Socket();
+  socket.connect();
+  socket.on('message',function(data){ 
+  var total = 0;	 
+  	  if ('buf' in data){
+  	   	  for(var i in data.buf) {
+  	   	  	for(var k in data.buf[i])	{
+   	   	  	 $("#"+k).text(data.buf[i][k]);
+   	   	  }
+  	  }
+  	}else{
+  	for(var key in data){
+   	 $("#"+key).text(data[key]);
+    }
+   }
+   	 $("font[color=blue]").each(function(index, domEle) { 
+ 		 
+   	 	if($(this).text().trim() != '')total += parseInt($(this).text());
+   	 	  
+   	 });
+   	 
+   	   	  	 
+  	$("#ret").html("<font color=red>" + total + "</font>");
+  });
+  
+  function send(){
+   
+    socket.send({vote:$("input[name='fruit']:checked").val()});	
+    
+  }
+</script>
+
+</body>
+</html>

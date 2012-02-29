@@ -1,0 +1,162 @@
+<HTML>
+  <head>
+	<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
+    <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
+    <script type="text/javascript">
+   
+   var jsReady = false;
+	 var isReady = false;	
+   function isReady() {
+     return jsReady;
+   }
+	function auReady() {
+         return isReady = true;
+     }
+     function pageInit() {
+         jsReady = true;
+         document.forms["optform"].output.value += "\n" + "JavaScript is ready.\n";
+     }
+ 
+ 
+	function sign(form) {
+	
+	freshNonce();
+	freshTimestamp();
+    var accessor = { consumerSecret: form.consumerSecret.value
+                   , tokenSecret   : form.tokenSecret.value};
+    var message = { method: form.httpMethod.value
+                  , action: form.URL.value
+                  , parameters: OAuth.decodeForm(form.parameters.value)
+                  };
+    for (var e = 0; e < form.elements.length; ++e) {
+        var input = form.elements[e];
+        if (input.name != null && input.name.substring(0, 6) == "oauth_"
+            && input.value != null && input.value != ""
+            && (!(input.type == "checkbox" || input.type == "radio") || input.checked))
+        {
+            message.parameters.push([input.name, input.value]);
+        }
+    }
+    OAuth.SignatureMethod.sign(message, accessor);
+	var tURL = document.request.URL.value+"?"+OAuth.SignatureMethod.normalizeParameters(message.parameters).replace(/oauth_signature/,"oauth_signature="+OAuth.getParameter(message.parameters, "oauth_signature")+"&oauth_signature");
+	var signcode = OAuth.getParameter(message.parameters, "oauth_signature");
+  
+  
+  document.getElementById("ret").innerHTML = tURL;
+	if(signcode.indexOf("+")!=-1){
+		
+		sign(form)
+	}else{
+		 
+	}
+	 
+   return tURL;
+}
+function showText(elementId, text) {
+    var child = document.createTextNode(text);
+    var element = document.getElementById(elementId);
+    if (element.hasChildNodes()) {
+        element.replaceChild(child, element.firstChild);
+    } else {
+        element.appendChild(child);
+    }
+}
+function freshTimestamp() {
+    document.request.oauth_timestamp.value = OAuth.timestamp();
+}
+function freshNonce() {
+    document.request.oauth_nonce.value = OAuth.nonce(32);
+}
+function changeFormElement(n,v) {
+    document.request[n].value = v;
+}
+function getWBStr(v){
+		if(!isReady){
+			alert("sign in first")
+		
+		}else{
+			var u = v.split("?");
+			changeFormElement("httpMethod","GET");
+			changeFormElement("URL",u[0]);
+			changeFormElement("parameters",u[1]);
+			alert("*****" + document.request.tokenSecret);
+			return sign(document.request);	
+		}
+
+}
+function postWBStr(v){
+	if(!isReady){
+		alert("sign in first")
+	
+	}else{
+		var u = v.split("?");
+		changeFormElement("httpMethod","POST");
+		changeFormElement("URL",u[0]);
+		changeFormElement("parameters",u[1]);
+		return sign(document.request);
+	}
+
+}
+
+function getWB(v){
+		var temp = getWBStr(v);
+		if(temp.indexOf("+")!=-1){
+			getWB(v);
+		}else{	
+			$("#ret").html(temp);
+		 
+		}
+		
+}
+function postWB(v){
+		var temp = postWBStr(v);
+		if(temp.indexOf("+")!=-1){
+			postWB(v);
+		}else{
+		  
+		}
+}
+
+function hideButton(){
+	
+	document.request.signBtn.value = "Connected!"
+	document.request.signBtn.disabled = true;
+}
+
+
+    </script>
+
+  </head>
+  <body onLoad="freshNonce();freshTimestamp();pageInit();">
+
+    <form name="request">
+      <table border="0">
+        <tr style="display:none"><th align="right">HTTP method:      </th><td><input name="httpMethod"             type="text" size="5"  value="GET"/></td></tr>
+        <tr style="display:none"><th align="right">URL:              </th><td><input name="URL"                    type="text" size="80" value="https://open.t.qq.com/cgi-bin/request_token"></td></tr>
+        <tr><th align="right">parameters:       </th><td><input name="parameters"             type="text" size="80" value="oauth_callback=null"/></td></tr>
+        <tr style="display:none"><th align="right">version:          </th><td><input name="oauth_version"          type="text" size="4"  value="1.0"/></td></tr>
+        <tr><th align="right">app key:     </th><td><input name="oauth_consumer_key"     type="text" size="64" value="填入你申请的appKey,不要碰上面的内容"/></td></tr>
+        <tr><th align="right">app secret:  </th><td><input name="consumerSecret"         type="text" size="64" value="填入你申请的appSecret"/></td></tr>
+        <tr><th align="right">token:            </th><td><input name="oauth_token"            type="text" size="64" value="" disabled=true></td></tr>
+        <tr><th align="right">token secret:     </th><td><input name="tokenSecret"            type="text" size="64" value="" disabled=true></td></tr>
+        <tr style="display:none"><th align="right">timestamp:        </th><td><input name="oauth_timestamp"        type="text" size="12"/>
+                                                         </td></tr>
+        <tr style="display:none"><th align="right">nonce:            </th><td><input name="oauth_nonce"            type="text" size="12"/>
+                                                        </td></tr>
+        <tr style="display:none"><th align="right">signature method: </th><td><input name="oauth_signature_method" type="text" size="12" value="HMAC-SHA1"/></td></tr>
+      </table>
+      <input name="signBtn" type="button" value="Sign" onClick="alert(sign(document.request))"/>
+    </form>
+	 
+	<form name="optform" onsubmit="return false;">
+       
+         <input type="button" value="load" onclick="getWB('http://open.t.qq.com/api/statuses/broadcast_timeline?format=json&pageflag=0&reqnum=10&pagetime=0');" />
+		 <input type="button" value="post" onclick="postWB('http://open.t.qq.com/api/t/add?format=json&content=来自#weibo_SDK#的测试消息！');" /><br />
+         <textarea cols="60" rows="10" name="output" readonly="true">Initializing...</textarea>
+     </form>
+     
+     <textarea cols="60" rows="10" id="ret" >Initializing...</textarea>
+     
+  </body>
+</HTML>
